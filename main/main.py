@@ -1,5 +1,6 @@
 from Common.reader import parquet_reader 
 from Common.saver import parquet_saver 
+from process.process import left_join 
 #main 
 maag_repa = parquet_reader(AppConfig.maag_repa_path)
 maag_master = parquet_reader(AppConfig.maag_master_path)
