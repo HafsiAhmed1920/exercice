@@ -1,13 +1,11 @@
-from Common.reader import parquet_reader 
-from pyspark.sql import DataFrame
-from Common.saver import save_parquet 
-from process.process import (
-    create_dataset_join1,
-    create_dataset_join2,
-    create_dataset_join3
-)
+""" taliking about the code in here """
 
-from config.config import AppConfig
+from Config.Config import AppConfig
+from Common.reader import parquet_reader 
+from pyspark.sql import DataFrame 
+from pyspark.sql.types import StructType
+from Common.saver import save_parquet 
+
 
 class CodeYJob:
     def __init__(
@@ -39,9 +37,9 @@ class CodeYJob:
         reac_ref = parquet_reader(self.reac_ref_path)
         maag_raty = parquet_reader(self.maag_raty_path)
          # Perform join operations to create datasets
-        leftjoin1 = self.create_dataset_join1(maag_master, reac_ref, join_columns, schema)
-        leftjoin2 = self.create_dataset_join2(leftjoin1, maag_repa, join_columns, schema)
-        result_df = self.create_dataset_join3(leftjoin2, maag_raty, join_column, schema)
+        leftjoin1 = self.create_dataset_join1(maag_master, reac_ref, AppConfig.join_columns1)
+        leftjoin2 = self.create_dataset_join2(leftjoin1, maag_repa, AppConfig.join_columns2)
+        result_df = self.create_dataset_join3(leftjoin2, maag_raty, AppConfig.join_columns3)
         save_parquet(leftjoin1,self.path1)
         save_parquet(leftjoin2,self.path2)
         save_parquet(result_df,self.path3)
@@ -51,10 +49,10 @@ class CodeYJob:
     
 
     def create_dataset_join1(
+        self,
         maag_master: DataFrame,
         reac_ref: DataFrame,
-        join_columns: list,
-        schema: StructType
+        join_columns: list
     ) -> DataFrame:
         """
         This function creates a dataset by performing a left join operation.
@@ -62,15 +60,14 @@ class CodeYJob:
         result_df = (
             maag_master.join(reac_ref, on=join_columns, how='left')
             .distinct()
-            .select(*schema.fieldNames())
         )
         return result_df
 
     def create_dataset_join2(
+        self,
         leftjoin1: DataFrame,
         maag_repa: DataFrame,
-        join_columns: list,
-        schema: StructType
+        join_columns: list
     ) -> DataFrame:
         """
         Creates a dataset by performing a left join operation.
@@ -78,17 +75,16 @@ class CodeYJob:
         result_df = (
             leftjoin1.join(maag_repa, on=join_columns, how='left')
             .distinct()
-            .select(*schema.fieldNames())
         )
         return result_df
 
 
 
     def create_dataset_join3(
+        self,
         leftjoin2: DataFrame,
         maag_raty: DataFrame,
-        join_column: str,
-        schema: StructType
+        join_column: str
     ) -> DataFrame:
         """
         Creates a dataset by performing a left join operation.
@@ -96,11 +92,10 @@ class CodeYJob:
         result_df = (
             leftjoin2.join(maag_raty, on=join_column, how='left')
             .distinct()
-            .select(*schema.fieldNames())
         )
         return result_df
-    
-    def run_job(**Kwargs:any) -> None : 
+    """ this function run the job"""
+    def run_job(self, **Kwargs: any) -> None: 
         maag_repa = AppConfig.maag_repa_path
         maag_master = AppConfig.maag_master_path
         rtpa_ref = AppConfig.rtpa_ref_path
@@ -111,15 +106,15 @@ class CodeYJob:
         output_path_3 = AppConfig.path3 
         
         job: CodeYJob = CodeYJob(
-        maag_repa,
-        maag_master,
-        rtpa_ref,
-        reac_ref,
-        maag_raty,
-        output_path_1,
-        output_path_2,
-        output_path_3
-       )
+                    maag_repa,
+                    maag_master,
+                    rtpa_ref,
+                    reac_ref,
+                    maag_raty,
+                    output_path_1,
+                    output_path_2,
+                    output_path_3
+                       )
         job.run()
            
 
