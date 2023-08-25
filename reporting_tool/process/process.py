@@ -1,10 +1,10 @@
 """ taliking about the code in here """
-
-from Config.Config import AppConfig
-from Common.reader import parquet_reader 
 from pyspark.sql import DataFrame 
-from pyspark.sql.types import StructType
-from Common.saver import save_parquet 
+from reporting_tool.Config.Config import AppConfig
+from reporting_tool.Common.reader import parquet_reader 
+from reporting_tool.Common.saver import save_parquet 
+
+""" the class that will run the job """
 
 
 class CodeYJob:
@@ -33,20 +33,22 @@ class CodeYJob:
         
         maag_repa = parquet_reader(self.maag_repa_path)
         maag_master = parquet_reader(self.maag_master_path)
-        rtpa_ref = parquet_reader(self.rtpa_ref_path)
         reac_ref = parquet_reader(self.reac_ref_path)
         maag_raty = parquet_reader(self.maag_raty_path)
-         # Perform join operations to create datasets
-        leftjoin1 = self.create_dataset_join1(maag_master, reac_ref, AppConfig.join_columns1)
-        leftjoin2 = self.create_dataset_join2(leftjoin1, maag_repa, AppConfig.join_columns2)
-        result_df = self.create_dataset_join3(leftjoin2, maag_raty, AppConfig.join_columns3)
-        save_parquet(leftjoin1,self.path1)
-        save_parquet(leftjoin2,self.path2)
-        save_parquet(result_df,self.path3)
-
-    
-    
-    
+        # Perform join operations to create datasets
+        leftjoin1 = self.create_dataset_join1(maag_master,
+                                              reac_ref,
+                                              AppConfig.join_columns1)
+        
+        leftjoin2 = self.create_dataset_join2(leftjoin1,
+                                              maag_repa,
+                                              AppConfig.join_columns2)
+        leftjoin3 = self.create_dataset_join3(leftjoin2,
+                                              maag_raty, 
+                                              AppConfig.join_columns3)
+        save_parquet(leftjoin1, self.path1)
+        save_parquet(leftjoin2, self.path2)
+        save_parquet(leftjoin3, self.path3)
 
     def create_dataset_join1(
         self,
@@ -78,14 +80,12 @@ class CodeYJob:
         )
         return result_df
 
-
-
     def create_dataset_join3(
         self,
         leftjoin2: DataFrame,
         maag_raty: DataFrame,
         join_column: str
-    ) -> DataFrame:
+          ) -> DataFrame:
         """
         Creates a dataset by performing a left join operation.
         """
@@ -115,11 +115,4 @@ class CodeYJob:
                     output_path_2,
                     output_path_3
                        )
-        job.run()
-           
-
-
-
-
-
-        
+        job.run()    

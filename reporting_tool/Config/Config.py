@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+
 @dataclass
 class AppConfig:
     maag_repa_path: str
@@ -16,15 +17,15 @@ class AppConfig:
 
 
 AppConfig = AppConfig(
-    maag_repa_path=r"C:\Users\ahafsi\Downloads\tables (1)\tables\maag_repa_rrol_linked",
-    maag_master_path=r"C:\Users\ahafsi\Downloads\tables (1)\tables\maag_master_agrem",
-    reac_ref_path=r"C:\Users\ahafsi\Downloads\tables (1)\tables\reac_ref_act_type",
-    rtpa_ref_path=r"C:\Users\ahafsi\Downloads\tables (1)\tables\rtpa_ref_third_party",
-    maag_raty_path=r"C:\Users\ahafsi\Downloads\tables (1)\tables\maag_raty_linked",
+    maag_repa_path=r"C:\Users\ahafsi\Downloads\mytables\tables\maag_repa_rrol_linked",
+    maag_master_path=r"C:\Users\ahafsi\Downloads\mytables\tables\maag_master_agrem",
+    reac_ref_path=r"C:\Users\ahafsi\Downloads\mytables\tables\reac_ref_act_type",
+    rtpa_ref_path=r"C:\Users\ahafsi\Downloads\mytables\tables\rtpa_ref_third_party",
+    maag_raty_path=r"C:\Users\ahafsi\Downloads\mytables\tables\maag_raty_linked",
     join_columns1=["c_act_type", "n_applic_infq"],
     join_columns2=['N_APPLIC_INFQ', 'C_MAST_AGREM_REFER'],
     join_columns3=["c_mast_agrem_refer"],
-    path1=r"C:\Users\ahafsi\Downloads\tables (1)\saved\join1",
-    path2=r"C:\Users\ahafsi\Downloads\tables (1)\saved\join2",
-    path3=r"C:\Users\ahafsi\Downloads\tables (1)\saved\join3"
+    path1=r"C:\Users\ahafsi\Downloads\mytables\saved\join1",
+    path2=r"C:\Users\ahafsi\Downloads\mytables\saved\join2",
+    path3=r"C:\Users\ahafsi\Downloads\mytables\saved\join3"
 )
