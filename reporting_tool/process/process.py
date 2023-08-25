@@ -36,64 +36,20 @@ class CodeYJob:
         reac_ref = parquet_reader(self.reac_ref_path)
         maag_raty = parquet_reader(self.maag_raty_path)
         # Perform join operations to create datasets
-        leftjoin1 = self.create_dataset_join1(maag_master,
-                                              reac_ref,
-                                              AppConfig.join_columns1)
+        leftjoin1 = create_dataset_join1(maag_master,
+                                         reac_ref,
+                                         AppConfig.join_columns1)
         
-        leftjoin2 = self.create_dataset_join2(leftjoin1,
-                                              maag_repa,
-                                              AppConfig.join_columns2)
-        leftjoin3 = self.create_dataset_join3(leftjoin2,
-                                              maag_raty, 
-                                              AppConfig.join_columns3)
+        leftjoin2 = create_dataset_join2(leftjoin1,
+                                         maag_repa,
+                                         AppConfig.join_columns2)
+        leftjoin3 = create_dataset_join3(leftjoin2,
+                                         maag_raty, 
+                                         AppConfig.join_columns3)
         save_parquet(leftjoin1, self.path1)
         save_parquet(leftjoin2, self.path2)
         save_parquet(leftjoin3, self.path3)
 
-    def create_dataset_join1(
-        self,
-        maag_master: DataFrame,
-        reac_ref: DataFrame,
-        join_columns: list
-    ) -> DataFrame:
-        """
-        This function creates a dataset by performing a left join operation.
-        """
-        result_df = (
-            maag_master.join(reac_ref, on=join_columns, how='left')
-            .distinct()
-        )
-        return result_df
-
-    def create_dataset_join2(
-        self,
-        leftjoin1: DataFrame,
-        maag_repa: DataFrame,
-        join_columns: list
-    ) -> DataFrame:
-        """
-        Creates a dataset by performing a left join operation.
-        """
-        result_df = (
-            leftjoin1.join(maag_repa, on=join_columns, how='left')
-            .distinct()
-        )
-        return result_df
-
-    def create_dataset_join3(
-        self,
-        leftjoin2: DataFrame,
-        maag_raty: DataFrame,
-        join_column: str
-          ) -> DataFrame:
-        """
-        Creates a dataset by performing a left join operation.
-        """
-        result_df = (
-            leftjoin2.join(maag_raty, on=join_column, how='left')
-            .distinct()
-        )
-        return result_df
     """ this function run the job"""
     def run_job(self, **Kwargs: any) -> None: 
         maag_repa = AppConfig.maag_repa_path
@@ -116,3 +72,48 @@ class CodeYJob:
                     output_path_3
                        )
         job.run()    
+
+
+def create_dataset_join1(
+    maag_master: DataFrame,
+    reac_ref: DataFrame,
+    join_columns: list
+) -> DataFrame:
+    """
+    This function creates a dataset by performing a left join operation.
+    """
+    result_df = (
+        maag_master.join(reac_ref, on=join_columns, how='left')
+        .distinct()
+    )
+    return result_df
+
+
+def create_dataset_join2(
+    leftjoin1: DataFrame,
+    maag_repa: DataFrame,
+    join_columns: list
+) -> DataFrame:
+    """
+    Creates a dataset by performing a left join operation.
+    """
+    result_df = (
+        leftjoin1.join(maag_repa, on=join_columns, how='left')
+        .distinct()
+    )
+    return result_df
+
+
+def create_dataset_join3(
+    leftjoin2: DataFrame,
+    maag_raty: DataFrame,
+    join_column: str
+        ) -> DataFrame:
+    """
+    Creates a dataset by performing a left join operation.
+    """
+    result_df = (
+        leftjoin2.join(maag_raty, on=join_column, how='left')
+        .distinct()
+    )
+    return result_df
