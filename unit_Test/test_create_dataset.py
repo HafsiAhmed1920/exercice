@@ -49,8 +49,10 @@ def test_data(spark):
     return leftjoin2, maag_raty, join_column, schema
 
 
-def test_create_dataset_join3(spark, test_data):
-    leftjoin2, maag_raty, join_column, schema = test_data
+@pytest.mark.usefixtures('spark', 'test_data')
+def test_create_dataset_join3(request):
+    leftjoin2, maag_raty, join_column, schema = request.getfixturevalue('test_data')
+    spark = request.getfixturevalue('spark')
     # Call the create_dataset_join3 function with the test data and store the result
     result_df = create_dataset_join3(spark, leftjoin2, maag_raty, join_column, schema)
     # Create an expected DataFrame that represents the expected result of the join operation
@@ -60,3 +62,4 @@ def test_create_dataset_join3(spark, test_data):
     # Check if the resulting DataFrame is equal to the expected DataFrame
     assert result_df.subtract(expected_df).count() == 0
     assert expected_df.subtract(result_df).count() == 0
+
