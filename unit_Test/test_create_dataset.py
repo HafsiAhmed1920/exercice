@@ -49,5 +49,3 @@ def test_create_dataset_join3(request):
     # Check if the resulting DataFrame is equal to the expected DataFrame
     assert result_df.subtract(expected_df).count() == 0
     assert expected_df.subtract(result_df).count() == 0
-
-

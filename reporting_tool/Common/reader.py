@@ -11,6 +11,4 @@ spark = spark_manager.start()
 
 def parquet_reader(filepath): 
     df = spark.read.parquet(filepath)
-    return df   
-
-
+    return df
