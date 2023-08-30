@@ -1,19 +1,10 @@
+from reporting_tool.Common.reader import parquet_reader
 import pytest
-from pyspark.sql import SparkSession
-from reporting_tool.Common.reader import parquet_reader 
+# Create a new SparkSessionManager instance
 
 
-@pytest.fixture(scope="session")
-def spark():
-    spark = SparkSession.builder \
-        .master("local[2]") \
-        .appName("pytest") \
-        .getOrCreate()
-    yield spark
-    spark.stop()
-
-
-def test_parquet_reader(spark, tmpdir):
+@pytest.mark.usefixtures("spark")
+def test_parquet_reader(tmpdir, spark):
     # Create a temporary Parquet file for testing
     data = [("Alice", 1), ("Bob", 2)]
     df = spark.createDataFrame(data, ["name", "age"])
